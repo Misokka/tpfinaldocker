@@ -1,0 +1,46 @@
+version: '3.8'
+services:
+  mysql:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: esgipassword
+      MYSQL_DATABASE: esgi
+      MYSQL_USER: esgi
+      MYSQL_PASSWORD: esgi
+    volumes:
+      - ./.mysql:/var/lib/mysql
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      SERVER_WEB_NAME: Serveur 1
+    ports:
+      - "8001:80"
+    depends_on:
+      - mysql
+
+  web2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      SERVER_WEB_NAME: Serveur 2
+    ports:
+      - "8002:80"
+    depends_on:
+      - mysql
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: esgi
+      PMA_PASSWORD: esgi
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
